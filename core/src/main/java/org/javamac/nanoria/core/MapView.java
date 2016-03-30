@@ -7,11 +7,11 @@ import pythagoras.f.IDimension;
 public class MapView extends Layer {
     private static final float LINE_WIDTH = 2;
 
-    private final Config game;
+    private final Nanoria game;
 
     public final float cellSize;
 
-    public MapView(Config game, IDimension viewSize) {
+    public MapView(Nanoria game, IDimension viewSize) {
         this.game = game;
         float maxBoardSize = Math.min(viewSize.width(), viewSize.height()) - 20;
         this.cellSize = (float) Math.floor(maxBoardSize / game.boardSize);
@@ -44,11 +44,13 @@ public class MapView extends Layer {
         }
     }
 
-    public static class Config {
-        public final int boardSize;
-
-        public Config(int boardSize) {
-            this.boardSize = boardSize;
-        }
+    /**
+     * Returns the offset to the center of cell {@code cc} (in x or y).
+     */
+    public float cell(int cc) {
+        // cc*cellSize is upper left corner, then cellSize/2 to center,
+        // then 1 to account for our 2 pixel line width
+        return cc * cellSize + cellSize / 2 + 1;
     }
+
 }

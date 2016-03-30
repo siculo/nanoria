@@ -9,9 +9,8 @@ import react.RMap;
 import react.Value;
 
 public class Nanoria extends SceneGame {
-    public static enum Piece {BLACK, WHITE}
 
-    private final MapView.Config config = new MapView.Config(8);
+    public final int boardSize = 8;
 
     public final RMap<Coord, Piece> pieces = RMap.create();
     public final Value<Piece> turn = Value.create(null);
@@ -28,6 +27,22 @@ public class Nanoria extends SceneGame {
             }
         });
 
-        rootLayer.addCenterAt(new MapView(config, size), size.width() / 2, size.height() / 2);
+        rootLayer.add(new GameView(this, size));
+
+        reset();
     }
+
+    /**
+     * Clears the board and sets the 2x2 set of starting pieces in the middle.
+     */
+    private void reset() {
+        pieces.clear();
+        int half = boardSize / 2;
+        pieces.put(new Coord(half - 1, half - 1), Piece.WHITE);
+        pieces.put(new Coord(half, half - 1), Piece.BLACK);
+        pieces.put(new Coord(half - 1, half), Piece.BLACK);
+        pieces.put(new Coord(half, half), Piece.WHITE);
+        turn.updateForce(Piece.BLACK);
+    }
+
 }
