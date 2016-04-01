@@ -1,15 +1,16 @@
 package org.javamac.nanoria.core;
 
 import playn.core.Canvas;
+import playn.core.Sound;
 import playn.core.Texture;
 import playn.core.Tile;
-import playn.scene.GroupLayer;
-import playn.scene.ImageLayer;
-import playn.scene.Layer;
+import playn.scene.*;
 import pythagoras.f.IDimension;
 import react.RMap;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class GameView extends GroupLayer {
@@ -18,12 +19,16 @@ public class GameView extends GroupLayer {
     private final GroupLayer pgroup = new GroupLayer();
     private final Tile[] ptiles;
     private final Map<Coord, ImageLayer> pviews = new HashMap<>();
+    private final Sound click;
 
     public GameView(Nanoria game, IDimension viewSize) {
         this.game = game;
+
         bview = new MapView(game, viewSize);
         addCenterAt(bview, viewSize.width() / 2, viewSize.height() / 2);
         addAt(pgroup, bview.tx(), bview.ty());
+
+        this.click = game.plat.assets().getSound("sounds/click");
 
         // draw a black piece and white piece into a single canvas image
         final float size = bview.cellSize - 2, hsize = size / 2;
@@ -60,6 +65,35 @@ public class GameView extends GroupLayer {
     public void close() {
         super.close();
         ptiles[0].texture().close(); // both ptiles reference the same texture
+    }
+
+    public void showPlays(List<Coord> coords, final Piece color) {
+        final List<ImageLayer> plays = new ArrayList<>();
+        for (final Coord coord : coords) {
+            ImageLayer pview = addPiece(coord, color);
+            pview.setAlpha(0.3f);
+            // when the player clicks on a potential play, commit that play as their move
+            pview.events().connect(new Pointer.Listener() {
+                @Override
+                public void onStart(Pointer.Interaction iact) {
+                    // clear out the potential plays layers
+                    for (ImageLayer play : plays) play.close();
+                    // apply this play to the game state
+                    game.logic.applyPlay(game.pieces, color, coord);
+                    click.play();
+                    // and move to the next player's turn
+                    game.turn.update(color.next());
+                }
+            });
+            // when the player hovers over a potential play, highlight it
+            pview.events().connect(new Mouse.Listener() {
+                @Override
+                public void onHover(Mouse.HoverEvent event, Mouse.Interaction iact) {
+                    iact.hitLayer.setAlpha(event.inside ? 0.6f : 0.3f);
+                }
+            });
+            plays.add(pview);
+        }
     }
 
     private ImageLayer addPiece(Coord at, Piece piece) {
