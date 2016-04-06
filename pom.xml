@@ -43,5 +43,6 @@
   <modules>
     <module>assets</module>
     <module>core</module>
+    <module>java</module>
   </modules>
 </project>
