@@ -17,9 +17,9 @@ public class Name {
 
     private String generateName() {
         double ratio = 0.8;
-        StringBuilder sb = new StringBuilder(new Syllabe().toString());
+        StringBuilder sb = new StringBuilder(new Syllable().toString());
         while (accept(ratio)) {
-            sb.append(new Syllabe().toString());
+            sb.append(new Syllable().toString());
             ratio = ratio * 0.5;
         }
         return sb.toString();
@@ -77,15 +77,15 @@ public class Name {
 
     }
 
-    private class Syllabe {
+    private class Syllable {
         private final Onset onset;
         private final Rime rime;
 
-        public Syllabe() {
+        public Syllable() {
             this(new Onset(), new Rime());
         }
 
-        public Syllabe(Onset onset, Rime rime) {
+        public Syllable(Onset onset, Rime rime) {
             this.onset = onset;
             this.rime = rime;
         }
