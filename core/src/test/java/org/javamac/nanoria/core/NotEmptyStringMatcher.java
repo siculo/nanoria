@@ -9,7 +9,7 @@ public class NotEmptyStringMatcher extends BaseMatcher<String> {
 
     @Override
     public boolean matches(Object item) {
-        if (item instanceof String) {
+        if (item != null && item instanceof String) {
             String current = (String) item;
             return current.length() > 0;
         }
