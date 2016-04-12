@@ -20,8 +20,13 @@ public class NameGenerator implements Generator {
     }
 
     private static class SyllableGenerator implements Generator {
+        private static final String CONSONANTS = "bbbbccccddddfffggghklllmmmnnnpppqqqrrrssstttvvwwxxzz";
+        private static final String VOWELS = "aaaaeeeiioouuyj";
+
         private final CircularQueue<Generator> segmentGenerators;
         private Generator current;
+        private boolean noMoreSyllables = false;
+        private double continueProbability = 0.9;
 
         public SyllableGenerator() {
             segmentGenerators = new CircularQueue<Generator>(new OnsetGenerator(), new NucleusGenerator(), new CodaGenerator());
@@ -38,10 +43,16 @@ public class NameGenerator implements Generator {
             return current.stop();
         }
 
+        private static final String selectRandom(String source) {
+            int s = (int) Math.floor(Math.random() * source.length());
+            return String.valueOf(source.charAt(s));
+        }
+
         private class OnsetGenerator implements Generator {
             @Override
             public String emit() {
-                return "c";
+                noMoreSyllables = Math.random() > continueProbability;
+                return selectRandom(CONSONANTS);
             }
 
             @Override
@@ -53,7 +64,7 @@ public class NameGenerator implements Generator {
         private class NucleusGenerator implements Generator {
             @Override
             public String emit() {
-                return "a";
+                return selectRandom(VOWELS);
             }
 
             @Override
@@ -65,12 +76,16 @@ public class NameGenerator implements Generator {
         private class CodaGenerator implements Generator {
             @Override
             public String emit() {
-                return "t";
+                if (Math.random() > 0.6)
+                    return selectRandom(CONSONANTS);
+                else
+                    return "";
             }
 
             @Override
             public boolean stop() {
-                return true;
+                continueProbability = continueProbability * 0.5;
+                return noMoreSyllables;
             }
         }
 
