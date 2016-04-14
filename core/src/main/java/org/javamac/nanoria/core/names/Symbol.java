@@ -68,4 +68,8 @@ public class Symbol implements Comparable<Symbol> {
     public String toString() {
         return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
     }
+
+    public String getAllows() {
+        return allows.toString();
+    }
 }
