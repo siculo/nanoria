@@ -10,15 +10,15 @@ import java.util.Collection;
 import java.util.List;
 import java.util.regex.Pattern;
 
-public class SymbolSetReaderTest {
+public class SymbolReaderTest {
     @Test
     public void createSymbolSetReader() {
-        SymbolSetReader reader = new SymbolSetReader(new StringReader(""));
+        SymbolReader reader = new SymbolReader(new StringReader(""));
     }
 
     @Test
     public void gotNoSymbolFromAnEmptyStream() throws InvalidSymbolException {
-        SymbolSetReader reader = new SymbolSetReader(new StringReader(""));
+        SymbolReader reader = new SymbolReader(new StringReader(""));
         Symbol symbol = reader.getNextSymbol();
 
         Assert.assertNull(symbol);
@@ -26,7 +26,7 @@ public class SymbolSetReaderTest {
 
     @Test
     public void getASymbol() throws InvalidSymbolException {
-        SymbolSetReader reader = new SymbolSetReader(new StringReader("b\t5\t[aeiou]{1,2}\tinset"));
+        SymbolReader reader = new SymbolReader(new StringReader("b\t5\t[aeiou]{1,2}\tinset"));
         Symbol symbol = reader.getNextSymbol();
 
         Assert.assertNotNull(symbol);
@@ -34,7 +34,7 @@ public class SymbolSetReaderTest {
 
     @Test
     public void skipEmptyLines() throws InvalidSymbolException {
-        SymbolSetReader reader = new SymbolSetReader(new StringReader("\n \n\n\t \nb\t5\t[aeiou]{1,2}\tinset\n"));
+        SymbolReader reader = new SymbolReader(new StringReader("\n \n\n\t \nb\t5\t[aeiou]{1,2}\tinset\n"));
 
         int symbolsRead = readAllSymbols(reader).size();
 
@@ -43,7 +43,7 @@ public class SymbolSetReaderTest {
 
     @Test
     public void skipComments() throws InvalidSymbolException {
-        SymbolSetReader reader = new SymbolSetReader(
+        SymbolReader reader = new SymbolReader(
                 new StringReader(
                         "b\t5\t[aeiou]{1,2}\tinset\n" +
                                 "br\t2\t([aeiou]{1,2})|[y]\tinset\n" +
@@ -60,7 +60,7 @@ public class SymbolSetReaderTest {
 
     @Test
     public void getASymbolPerLine() throws InvalidSymbolException {
-        SymbolSetReader reader = new SymbolSetReader(new StringReader("\n# ciao ciao\nb\t5\t[aeiou]{1,2}\tinset\n# fine"));
+        SymbolReader reader = new SymbolReader(new StringReader("\n# ciao ciao\nb\t5\t[aeiou]{1,2}\tinset\n# fine"));
 
         int symbolsRead = readAllSymbols(reader).size();
 
@@ -69,7 +69,7 @@ public class SymbolSetReaderTest {
 
     @Test
     public void symbolContentIsRead() throws InvalidSymbolException {
-        SymbolSetReader reader = new SymbolSetReader(new StringReader("b\t5\t[aeiou]{1,2}\tinset,last"));
+        SymbolReader reader = new SymbolReader(new StringReader("b\t5\t[aeiou]{1,2}\tinset,last"));
 
         Symbol symbol = reader.getNextSymbol();
 
@@ -79,10 +79,23 @@ public class SymbolSetReaderTest {
         Assert.assertArrayEquals(new Role[]{Role.INSET, Role.LAST}, symbol.getRoles());
     }
 
-    @Ignore
-    @Test
-    public void keyError() throws InvalidSymbolException {
-        SymbolSetReader reader = new SymbolSetReader(new StringReader("b\t5\t[aeiou]{1,2}\tinset,last"));
+    @Test(expected = InvalidSymbolException.class)
+    public void wrongKey() throws InvalidSymbolException {
+        SymbolReader reader = new SymbolReader(new StringReader("\t5\t[aeiou]{1,2}\tinset,last"));
+
+        Symbol symbol = reader.getNextSymbol();
+    }
+
+    @Test(expected = InvalidSymbolException.class)
+    public void wrongWeight() throws InvalidSymbolException {
+        SymbolReader reader = new SymbolReader(new StringReader("b\tas\t[aeiou]{1,2}\tinset,last"));
+
+        Symbol symbol = reader.getNextSymbol();
+    }
+
+    @Test(expected = InvalidSymbolException.class)
+    public void wrongRole() throws InvalidSymbolException {
+        SymbolReader reader = new SymbolReader(new StringReader("b\t3.2\t[aeiou]{1,2}\tinset,lost"));
 
         Symbol symbol = reader.getNextSymbol();
     }
@@ -104,7 +117,7 @@ public class SymbolSetReaderTest {
         System.out.println(String.format("%s matches %s = %b", regexp, input, Pattern.matches(regexp, input)));
     }
 
-    private Collection<Symbol> readAllSymbols(SymbolSetReader reader) throws InvalidSymbolException {
+    private Collection<Symbol> readAllSymbols(SymbolReader reader) throws InvalidSymbolException {
         List<Symbol> symbols = new ArrayList<Symbol>();
         Symbol symbol;
         while ((symbol = reader.getNextSymbol()) != null) {

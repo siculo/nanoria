@@ -1,14 +1,13 @@
 package org.javamac.nanoria.core.names;
 
 import org.apache.commons.io.LineIterator;
-import org.apache.commons.lang.math.DoubleRange;
 
 import java.io.Reader;
 
-public class SymbolSetReader {
+public class SymbolReader {
     private final LineIterator lineIterator;
 
-    public SymbolSetReader(Reader reader) {
+    public SymbolReader(Reader reader) {
         this.lineIterator = new LineIterator(reader);
     }
 
@@ -36,19 +35,35 @@ public class SymbolSetReader {
             return null;
         }
         final String key = lineContent[0];
-        final double weight = Double.valueOf(lineContent[1]);
+        final double weight = getWeight(lineContent[1]);
         final String allows = lineContent[2];
-        final Role[] roles = convertToRoles(lineContent[3]);
+        final Role[] roles = getRoles(lineContent[3]);
         return new Symbol(key, weight, allows, roles);
     }
 
-    private Role[] convertToRoles(String text) {
+    private Double getWeight(String weight) throws InvalidSymbolException {
+        try {
+            return Double.valueOf(weight);
+        } catch (NumberFormatException error) {
+            throw new InvalidSymbolException("wrong weight: " + weight);
+        }
+    }
+
+    private Role[] getRoles(String text) throws InvalidSymbolException {
         String[] rolesText = text.split(",");
         Role[] roles = new Role[rolesText.length];
         int i = 0;
         for (String r: rolesText) {
-            roles[i++] = Role.valueOf(r.toUpperCase());
+            roles[i++] = getRole(r);
         }
         return roles;
+    }
+
+    private Role getRole(String r) throws InvalidSymbolException {
+        try {
+            return Role.valueOf(r.toUpperCase());
+        } catch (IllegalArgumentException exception) {
+            throw new InvalidSymbolException("wrong role: " + r);
+        }
     }
 }
