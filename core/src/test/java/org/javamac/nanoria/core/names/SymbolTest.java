@@ -8,35 +8,35 @@ import java.util.regex.PatternSyntaxException;
 
 public class SymbolTest {
     @Test
-    public void simpleRoleMatching() {
+    public void simpleRoleMatching() throws InvalidSymbolException {
         Symbol symbol = new Symbol("c", 5.0, null, Role.INSET);
         boolean matching = symbol.matchRoles(Role.INSET);
         Assert.assertTrue(matching);
     }
 
     @Test
-    public void multipleRolesMatching() {
+    public void multipleRolesMatching() throws InvalidSymbolException {
         Symbol symbol = new Symbol("c", 5.0, null, Role.CODA);
         boolean matching = symbol.matchRoles(Role.CODA, Role.FIRST);
         Assert.assertTrue(matching);
     }
 
     @Test
-    public void multipleRolesMatching2() {
+    public void multipleRolesMatching2() throws InvalidSymbolException {
         Symbol symbol = new Symbol("c", 5.0, null, Role.INSET, Role.MIDDLE);
         boolean matching = symbol.matchRoles(Role.INSET, Role.MIDDLE);
         Assert.assertTrue(matching);
     }
 
     @Test
-    public void notMatchingRoles() {
+    public void notMatchingRoles() throws InvalidSymbolException {
         Symbol symbol = new Symbol("c", 5.0, null, Role.NUCLEUS, Role.MIDDLE);
         boolean matching = symbol.matchRoles(Role.NUCLEUS, Role.LAST);
         Assert.assertFalse(matching);
     }
 
     @Test
-    public void compareEqualsSymbol() {
+    public void compareEqualsSymbol() throws InvalidSymbolException {
         Comparable<Symbol> a = new Symbol("c", 5.0, null, Role.NUCLEUS, Role.MIDDLE);
         Symbol b = new Symbol("c", 5.0, null, Role.NUCLEUS, Role.MIDDLE);
 
@@ -44,7 +44,7 @@ public class SymbolTest {
     }
 
     @Test
-    public void compareSymbol1() {
+    public void compareSymbol1() throws InvalidSymbolException {
         Comparable<Symbol> a = new Symbol("c", 5.0, null, Role.NUCLEUS, Role.MIDDLE);
         Symbol b = new Symbol("c", 5.0, null, Role.NUCLEUS);
 
@@ -52,7 +52,7 @@ public class SymbolTest {
     }
 
     @Test
-    public void compareSymbol2() {
+    public void compareSymbol2() throws InvalidSymbolException {
         Comparable<Symbol> a = new Symbol("c", 5.0, null, Role.NUCLEUS);
         Symbol b = new Symbol("c", 5.0, null, Role.NUCLEUS, Role.MIDDLE);
 
@@ -60,41 +60,51 @@ public class SymbolTest {
     }
 
     @Test
-    public void allowedByNull() {
+    public void allowedByNull() throws InvalidSymbolException {
         Symbol symbol = new Symbol("c", 5.0, null, Role.NUCLEUS, Role.MIDDLE);
         Assert.assertTrue(symbol.allowedBy(null));
     }
 
     @Test
-    public void allowedBySymbolWithNullRule() {
+    public void allowedBySymbolWithNullRule() throws InvalidSymbolException {
         Symbol symbol = new Symbol("c", 5.0, null, Role.NUCLEUS, Role.MIDDLE);
         Symbol previousSymbol = new Symbol("c", 5.0, null, Role.NUCLEUS, Role.MIDDLE);
         Assert.assertTrue(symbol.allowedBy(previousSymbol));
     }
 
     @Test
-    public void allowedBySymbolWithEmptyRule() {
+    public void allowedBySymbolWithEmptyRule() throws InvalidSymbolException {
         Symbol symbol = new Symbol("c", 5.0, null, Role.NUCLEUS, Role.MIDDLE);
         Symbol previousSymbol = new Symbol("c", 5.0, "", Role.NUCLEUS, Role.MIDDLE);
         Assert.assertTrue(symbol.allowedBy(previousSymbol));
     }
 
-    @Test(expected = PatternSyntaxException.class)
-    public void ruleMustBeAValidPattern() {
-        new Symbol("c", 5.0, "**", Role.NUCLEUS, Role.MIDDLE);
-    }
-
     @Test
-    public void allowedByRule() {
+    public void allowedByRule() throws InvalidSymbolException {
         Symbol previousSymbol = new Symbol("c", 5.0, "[bcd].*", Role.NUCLEUS, Role.MIDDLE);
         Symbol symbol = new Symbol("c", 5.0, null, Role.NUCLEUS, Role.MIDDLE);
         Assert.assertTrue(symbol.allowedBy(previousSymbol));
     }
 
     @Test
-    public void notAllowedByRule() {
+    public void notAllowedByRule() throws InvalidSymbolException {
         Symbol previousSymbol = new Symbol("c", 5.0, "[bcd].*", Role.NUCLEUS, Role.MIDDLE);
         Symbol symbol = new Symbol("a", 5.0, null, Role.NUCLEUS, Role.MIDDLE);
         Assert.assertFalse(symbol.allowedBy(previousSymbol));
+    }
+
+    @Test(expected = InvalidSymbolException.class)
+    public void keyMustBeValid() throws InvalidSymbolException {
+        new Symbol("", 5.0, "[bcd].*", Role.NUCLEUS, Role.MIDDLE);
+    }
+
+    @Test(expected = InvalidSymbolException.class)
+    public void weightMustBeValid() throws InvalidSymbolException {
+        new Symbol("a", -33.563, "[bcd].*", Role.NUCLEUS, Role.MIDDLE);
+    }
+
+    @Test(expected = InvalidSymbolException.class)
+    public void allowsMustBeAValidPattern() throws InvalidSymbolException {
+        new Symbol("c", 5.0, "**", Role.NUCLEUS, Role.MIDDLE);
     }
 }

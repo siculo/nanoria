@@ -12,7 +12,7 @@ public class SymbolSetReader {
         this.lineIterator = new LineIterator(reader);
     }
 
-    public Symbol getNextSymbol() {
+    public Symbol getNextSymbol() throws InvalidSymbolException {
         Symbol symbol = null;
         while (symbol == null && lineIterator.hasNext()) {
             symbol = extractSymbol(lineIterator.next());
@@ -20,7 +20,7 @@ public class SymbolSetReader {
         return symbol;
     }
 
-    private Symbol extractSymbol(String line) {
+    private Symbol extractSymbol(String line) throws InvalidSymbolException {
         if (line.startsWith("#")) {
             return null;
         }
@@ -30,7 +30,7 @@ public class SymbolSetReader {
         return convertToSymbol(line);
     }
 
-    private Symbol convertToSymbol(String line) {
+    private Symbol convertToSymbol(String line) throws InvalidSymbolException {
         String[] lineContent = line.split("\t");
         if (lineContent.length != 4) {
             return null;

@@ -4,8 +4,8 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 public class Symbol implements Comparable<Symbol> {
     private final Role roles[];
@@ -13,11 +13,33 @@ public class Symbol implements Comparable<Symbol> {
     private final double weight;
     private final Pattern allows;
 
-    public Symbol(String key, double weight, String allows, Role... roles) {
-        this.key = key;
-        this.weight = weight;
-        this.allows = StringUtils.isEmpty(allows) ? null : Pattern.compile(allows);
+    public Symbol(String key, double weight, String allows, Role... roles) throws InvalidSymbolException {
+        this.key = getKey(key);
+        this.weight = getWeight(weight);
+        this.allows = getPattern(allows);
         this.roles = roles;
+    }
+
+    private double getWeight(double weight) throws InvalidSymbolException {
+        if (weight <= 0.0) {
+            throw new InvalidSymbolException("wrong weight: " + weight);
+        }
+        return weight;
+    }
+
+    private String getKey(String key) throws InvalidSymbolException {
+        if (StringUtils.isEmpty(key)) {
+            throw new InvalidSymbolException("wrong key: " + key);
+        }
+        return key;
+    }
+
+    private Pattern getPattern(String allows) throws InvalidSymbolException {
+        try {
+            return StringUtils.isEmpty(allows) ? null : Pattern.compile(allows);
+        } catch (PatternSyntaxException exception) {
+            throw new InvalidSymbolException("wrong pattern: " + allows);
+        }
     }
 
     public String getKey() {

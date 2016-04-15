@@ -1,6 +1,7 @@
 package org.javamac.nanoria.core.names;
 
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.StringReader;
@@ -16,7 +17,7 @@ public class SymbolSetReaderTest {
     }
 
     @Test
-    public void gotNoSymbolFromAnEmptyStream() {
+    public void gotNoSymbolFromAnEmptyStream() throws InvalidSymbolException {
         SymbolSetReader reader = new SymbolSetReader(new StringReader(""));
         Symbol symbol = reader.getNextSymbol();
 
@@ -24,7 +25,7 @@ public class SymbolSetReaderTest {
     }
 
     @Test
-    public void getASymbol() {
+    public void getASymbol() throws InvalidSymbolException {
         SymbolSetReader reader = new SymbolSetReader(new StringReader("b\t5\t[aeiou]{1,2}\tinset"));
         Symbol symbol = reader.getNextSymbol();
 
@@ -32,7 +33,7 @@ public class SymbolSetReaderTest {
     }
 
     @Test
-    public void skipEmptyLines() {
+    public void skipEmptyLines() throws InvalidSymbolException {
         SymbolSetReader reader = new SymbolSetReader(new StringReader("\n \n\n\t \nb\t5\t[aeiou]{1,2}\tinset\n"));
 
         int symbolsRead = readAllSymbols(reader).size();
@@ -41,7 +42,7 @@ public class SymbolSetReaderTest {
     }
 
     @Test
-    public void skipComments() {
+    public void skipComments() throws InvalidSymbolException {
         SymbolSetReader reader = new SymbolSetReader(
                 new StringReader(
                         "b\t5\t[aeiou]{1,2}\tinset\n" +
@@ -58,7 +59,7 @@ public class SymbolSetReaderTest {
     }
 
     @Test
-    public void getASymbolPerLine() {
+    public void getASymbolPerLine() throws InvalidSymbolException {
         SymbolSetReader reader = new SymbolSetReader(new StringReader("\n# ciao ciao\nb\t5\t[aeiou]{1,2}\tinset\n# fine"));
 
         int symbolsRead = readAllSymbols(reader).size();
@@ -67,7 +68,7 @@ public class SymbolSetReaderTest {
     }
 
     @Test
-    public void symbolContentIsRead() {
+    public void symbolContentIsRead() throws InvalidSymbolException {
         SymbolSetReader reader = new SymbolSetReader(new StringReader("b\t5\t[aeiou]{1,2}\tinset,last"));
 
         Symbol symbol = reader.getNextSymbol();
@@ -76,7 +77,14 @@ public class SymbolSetReaderTest {
         Assert.assertEquals(5.0, symbol.getWeight(), 0);
         Assert.assertEquals("[aeiou]{1,2}", symbol.getAllows());
         Assert.assertArrayEquals(new Role[]{Role.INSET, Role.LAST}, symbol.getRoles());
+    }
 
+    @Ignore
+    @Test
+    public void keyError() throws InvalidSymbolException {
+        SymbolSetReader reader = new SymbolSetReader(new StringReader("b\t5\t[aeiou]{1,2}\tinset,last"));
+
+        Symbol symbol = reader.getNextSymbol();
     }
 
     // @Test
@@ -96,7 +104,7 @@ public class SymbolSetReaderTest {
         System.out.println(String.format("%s matches %s = %b", regexp, input, Pattern.matches(regexp, input)));
     }
 
-    private Collection<Symbol> readAllSymbols(SymbolSetReader reader) {
+    private Collection<Symbol> readAllSymbols(SymbolSetReader reader) throws InvalidSymbolException {
         List<Symbol> symbols = new ArrayList<Symbol>();
         Symbol symbol;
         while ((symbol = reader.getNextSymbol()) != null) {

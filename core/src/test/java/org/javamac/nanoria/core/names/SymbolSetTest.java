@@ -19,7 +19,7 @@ public class SymbolSetTest {
     }
 
     @Test
-    public void selectTheOnlySymbolAdded() {
+    public void selectTheOnlySymbolAdded() throws InvalidSymbolException {
         Symbol symbol = new Symbol("c", 5.0, null, Role.INSET);
         symbols.add(symbol);
         Symbol previousSymbol = null;
@@ -28,7 +28,7 @@ public class SymbolSetTest {
     }
 
     @Test
-    public void selectASymbolForRole() {
+    public void selectASymbolForRole() throws InvalidSymbolException {
         symbols.add(new Symbol("c", 5.0, null, Role.INSET));
         symbols.add(new Symbol("t", 2.0, null, Role.FIRST));
         Symbol selected = symbols.select(null, Role.INSET);
@@ -47,7 +47,7 @@ public class SymbolSetTest {
     }
 
     @Test
-    public void selectASymbolForRoles() {
+    public void selectASymbolForRoles() throws InvalidSymbolException {
         Symbol expected = new Symbol("t", 2.0, null, Role.FIRST);
 
         symbols.add(new Symbol("c", 5.0, null, Role.INSET, Role.LAST));
@@ -60,7 +60,7 @@ public class SymbolSetTest {
     }
 
     @Test
-    public void selectAMoreCompellingSymbolForRoles() {
+    public void selectAMoreCompellingSymbolForRoles() throws InvalidSymbolException {
         Symbol expected = new Symbol("c", 5.0, null, Role.INSET, Role.LAST);
 
         symbols.add(new Symbol("c", 5.0, null, Role.INSET));
@@ -73,7 +73,7 @@ public class SymbolSetTest {
     }
 
     @Test
-    public void selectAMoreCompellingRandomSymbolForRoles() {
+    public void selectAMoreCompellingRandomSymbolForRoles() throws InvalidSymbolException {
         Symbol expected = new Symbol("c", 2.0, null, Role.INSET, Role.LAST);
 
         symbols.add(new Symbol("c", 5.0, null, Role.INSET));
@@ -89,7 +89,7 @@ public class SymbolSetTest {
     }
 
     @Test
-    public void selectAMoreCompellingRandomSymbolForRoles2() {
+    public void selectAMoreCompellingRandomSymbolForRoles2() throws InvalidSymbolException {
         Symbol expected = new Symbol("c", 5.0, null, Role.INSET, Role.LAST);
 
         symbols.add(new Symbol("c", 5.0, null, Role.INSET));
@@ -105,7 +105,7 @@ public class SymbolSetTest {
     }
 
     @Test
-    public void selectASymbolCompatibleWithPreviousSymbol() {
+    public void selectASymbolCompatibleWithPreviousSymbol() throws InvalidSymbolException {
         Symbol previous = new Symbol("c", 4.0, "[aeiou].*", Role.INSET);
         Symbol expected = new Symbol("a", 5.0, null, Role.NUCLEUS);
 
