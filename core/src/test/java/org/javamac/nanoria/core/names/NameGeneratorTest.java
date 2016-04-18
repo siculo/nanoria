@@ -19,18 +19,6 @@ public class NameGeneratorTest {
 
     @Test
     public void generateNamesFromASymbolSet() throws FileNotFoundException, URISyntaxException, InvalidSymbolException {
-        SymbolSet symbolSet = new SymbolSet(randomNumberGenerator);
-        readLanguageSymbols(symbolSet, getFileFromResource(NameGeneratorTest.class, "testSymbols.txt"));
-        NameGenerator generator = new NameGenerator(symbolSet);
-
-        Symbol symbol = symbolSet.select(null, Role.FIRST, Role.INSET);
-        System.out.println(symbol.getKey());
-        Assert.assertNotNull(symbol);
-
-//        String name = generator.generate();
-//        System.out.println(name);
-//        Assert.assertThat(name, NotEmptyStringMatcher.INSTANCE);
-
     }
 
     private File getFileFromResource(Class<NameGeneratorTest> resourceClass, String fileName) throws URISyntaxException {

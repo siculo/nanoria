@@ -6,11 +6,9 @@ import org.apache.commons.lang.builder.ToStringStyle;
 import java.util.*;
 
 public class SymbolSet {
-    private final RandomNumberGenerator generator;
     private final PriorityQueue<Symbol> symbolsQueue;
 
-    public SymbolSet(RandomNumberGenerator generator) {
-        this.generator = generator;
+    public SymbolSet() {
         this.symbolsQueue = new PriorityQueue<Symbol>(1, new RelevanceComparator());
     }
 
@@ -25,11 +23,7 @@ public class SymbolSet {
         symbolsQueue.add(symbol);
     }
 
-    public Symbol select(Symbol previousSymbol, Role... roles) {
-        return getRandomSymbol(getMatchingSymbols(previousSymbol, roles));
-    }
-
-    public List<Symbol> getMatchingSymbols(Symbol previousSymbol, Role... roles) {
+    public List<Symbol> selectMatchingSymbols(Symbol previousSymbol, Role... roles) {
         Map<String, Symbol> symbolCollector = new HashMap<String, Symbol>();
         for (Symbol s : symbolsQueue) {
             if (s.matchRoles(roles) && s.allowedBy(previousSymbol)) {
@@ -45,36 +39,6 @@ public class SymbolSet {
             symbols.add(s);
         }
         return symbols;
-    }
-
-    private Symbol getRandomSymbol(List<Symbol> matchingSymbols) {
-        final double randomValue = generator.generate(getTotalWeight(matchingSymbols));
-        double runningWeight = 0;
-        for (Symbol matchingSymbol : matchingSymbols) {
-            runningWeight += matchingSymbol.getWeight();
-            if (randomValue < runningWeight) {
-                return matchingSymbol;
-            }
-        }
-        return matchingSymbols.size() > 0 ? matchingSymbols.get(matchingSymbols.size() - 1) : null;
-    }
-
-    private double getTotalWeight(List<Symbol> matchingSymbols) {
-        double totalWeight = 0;
-        for (Symbol matchingSymbol : matchingSymbols) {
-            totalWeight += matchingSymbol.getWeight();
-        }
-        return totalWeight;
-    }
-
-    public Collection<Symbol> findSymbols(Role role) {
-        List<Symbol> foundSymbols = new ArrayList<Symbol>();
-        for (Symbol s : symbolsQueue) {
-            if (s.matchRoles(role)) {
-                foundSymbols.add(s);
-            }
-        }
-        return foundSymbols;
     }
 
     @Override

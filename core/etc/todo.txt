@@ -1,2 +1,2 @@
-- move random symbol selection out of SymbolSet
 - name generator
+- use a more standard random number generation class instead of org.javamac.nanoria.core.names.RandomNumberGenerator

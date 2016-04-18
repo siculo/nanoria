@@ -7,176 +7,140 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 public class SymbolSetTest {
-    private MyRandomNumberGenerator generator;
     private SymbolSet symbols;
+    private List<Symbol> definedSymbols;
 
     @Before
     public void setUp() {
-        generator = new MyRandomNumberGenerator();
-        symbols = new SymbolSet(generator);
+        symbols = new SymbolSet();
+        definedSymbols = new ArrayList<Symbol>();
     }
 
     @Test
     public void selectTheOnlySymbolAdded() throws InvalidSymbolException {
-        Symbol symbol = new Symbol("c", 5.0, null, Role.INSET);
-        symbols.add(symbol);
-        Symbol previousSymbol = null;
-        Symbol selected = symbols.select(previousSymbol, Role.INSET, Role.FIRST);
-        Assert.assertSame(symbol, selected);
+        defineSymbols(
+                new Symbol("c", 5.0, null, Role.INSET)
+        );
+
+        List<Symbol> matchingSymbols = symbols.selectMatchingSymbols(null, Role.INSET, Role.FIRST);
+
+        Assert.assertThat(matchingSymbols, new SymbolListMatcher(0));
     }
 
     @Test
-    public void selectASymbolForRole() throws InvalidSymbolException {
-        symbols.add(new Symbol("c", 5.0, null, Role.INSET));
-        symbols.add(new Symbol("t", 2.0, null, Role.FIRST));
+    public void selectSymbolsForRole() throws InvalidSymbolException {
+        defineSymbols(
+                new Symbol("c", 5.0, null, Role.INSET),
+                new Symbol("e", 5.0, null, Role.NUCLEUS),
+                new Symbol("x", 2.0, null, Role.INSET)
+        );
 
-        Symbol selected = symbols.select(null, Role.INSET);
+        List<Symbol> matchingSymbols = symbols.selectMatchingSymbols(null, Role.INSET);
 
-        Assert.assertThat(selected, new SymbolRoleMatcher(Role.INSET));
+        Assert.assertThat(matchingSymbols, new SymbolListMatcher(0, 2));
     }
 
     @Test
-    public void selectASymbolForRoles() throws InvalidSymbolException {
-        Symbol expected = new Symbol("t", 2.0, null, Role.FIRST);
+    public void selectSymbolsForRoles() throws InvalidSymbolException {
+        defineSymbols(
+                new Symbol("c", 5.0, null, Role.INSET, Role.LAST),
+                new Symbol("t", 2.0, null, Role.FIRST),
+                new Symbol("c", 5.0, null, Role.CODA, Role.FIRST)
+        );
 
-        symbols.add(new Symbol("c", 5.0, null, Role.INSET, Role.LAST));
-        symbols.add(expected);
-        symbols.add(new Symbol("c", 5.0, null, Role.CODA, Role.FIRST));
+        List<Symbol> matchingSymbols = symbols.selectMatchingSymbols(null, Role.INSET, Role.FIRST);
 
-        Symbol selected = symbols.select(null, Role.INSET, Role.FIRST);
-
-        Assert.assertSame(expected, selected);
+        Assert.assertThat(matchingSymbols, new SymbolListMatcher(1));
     }
 
     @Test
-    public void selectARandomSymbol1() throws InvalidSymbolException {
-        final Symbol expected;
+    public void selectSymbolsForRoles2() throws InvalidSymbolException {
+        defineSymbols(
+                new Symbol("", 5.0, null, Role.INSET),
+                new Symbol("c", 5.0, null, Role.INSET, Role.FIRST),
+                new Symbol("d", 5.0, null, Role.CODA)
+        );
 
-        symbols.add(expected = new Symbol("", 5.0, null, Role.INSET));
-        symbols.add(new Symbol("c", 5.0, null, Role.INSET, Role.FIRST));
-        symbols.add(new Symbol("d", 5.0, null, Role.CODA));
+        List<Symbol> matchingSymbols = symbols.selectMatchingSymbols(null, Role.INSET, Role.FIRST);
 
-        generator.fakeRandom = 0.0;
-
-        Symbol selected = symbols.select(null, Role.INSET, Role.FIRST);
-
-        System.out.println(selected);
-
-        Assert.assertSame(expected, selected);
-    }
-
-    @Test
-    public void selectARandomSymbol2() throws InvalidSymbolException {
-        final Symbol expected;
-
-        symbols.add(new Symbol("", 5.0, null, Role.INSET));
-        symbols.add(expected = new Symbol("c", 5.0, null, Role.INSET, Role.FIRST));
-        symbols.add(new Symbol("d", 5.0, null, Role.CODA));
-
-        generator.fakeRandom = 6.2;
-
-        Symbol selected = symbols.select(null, Role.INSET, Role.FIRST);
-
-        System.out.println(selected);
-
-        Assert.assertSame(expected, selected);
-    }
-
-    @Test
-    public void selectAMoreCompellingSymbolForRoles() throws InvalidSymbolException {
-        Symbol expected = new Symbol("c", 5.0, null, Role.INSET, Role.LAST);
-
-        symbols.add(new Symbol("c", 5.0, null, Role.INSET));
-        symbols.add(expected);
-        symbols.add(new Symbol("c", 5.0, null, Role.CODA, Role.FIRST));
-
-        Symbol selected = symbols.select(null, Role.INSET, Role.LAST);
-
-        Assert.assertSame(expected, selected);
+        Assert.assertThat(matchingSymbols, new SymbolListMatcher(0, 1));
     }
 
     @Test
     public void selectAMoreCompellingRandomSymbolForRoles() throws InvalidSymbolException {
-        Symbol expected;
+        defineSymbols(
+                new Symbol("c", 5.0, null, Role.INSET),
+                new Symbol("p", 5.0, null, Role.INSET, Role.LAST),
+                new Symbol("c", 2.0, null, Role.INSET, Role.LAST),
+                new Symbol("c", 5.0, null, Role.CODA, Role.FIRST)
+        );
 
-        symbols.add(new Symbol("c", 5.0, null, Role.INSET));
-        symbols.add(new Symbol("p", 5.0, null, Role.INSET, Role.LAST));
-        symbols.add(expected = new Symbol("c", 2.0, null, Role.INSET, Role.LAST));
-        symbols.add(new Symbol("c", 5.0, null, Role.CODA, Role.FIRST));
+        List<Symbol> matchingSymbols = symbols.selectMatchingSymbols(null, Role.INSET, Role.LAST);
 
-        generator.fakeRandom = 7.0;
-
-        Symbol selected = symbols.select(null, Role.INSET, Role.LAST);
-
-        Assert.assertSame(expected, selected);
-    }
-
-    @Test
-    public void selectAMoreCompellingRandomSymbolForRoles2() throws InvalidSymbolException {
-        Symbol expected;
-
-        symbols.add(new Symbol("c", 5.0, null, Role.INSET));
-        symbols.add(expected = new Symbol("x", 5.0, null, Role.INSET, Role.LAST));
-        symbols.add(new Symbol("p", 2.0, null, Role.INSET, Role.LAST));
-        symbols.add(new Symbol("c", 5.0, null, Role.CODA, Role.FIRST));
-
-        generator.fakeRandom = 7.5;
-
-        Symbol selected = symbols.select(null, Role.INSET, Role.LAST);
-
-        System.out.println(selected);
-
-        Assert.assertSame(expected, selected);
+        Assert.assertThat(matchingSymbols, new SymbolListMatcher(1, 2));
     }
 
     @Test
     public void selectASymbolCompatibleWithPreviousSymbol() throws InvalidSymbolException {
-        Symbol previous = new Symbol("c", 4.0, "[aeiou].*", Role.INSET);
-        Symbol expected = new Symbol("a", 5.0, null, Role.NUCLEUS);
+        defineSymbols(
+                new Symbol("c", 4.0, "[aeiou].*", Role.INSET),
+                new Symbol("y", 2.0, null, Role.NUCLEUS),
+                new Symbol("a", 5.0, null, Role.NUCLEUS),
+                new Symbol("j", 2.0, null, Role.NUCLEUS),
+                new Symbol("k", 3.0, null, Role.CODA, Role.FIRST)
+        );
 
-        symbols.add(previous);
-        symbols.add(new Symbol("y", 2.0, null, Role.NUCLEUS));
-        symbols.add(expected);
-        symbols.add(new Symbol("j", 2.0, null, Role.NUCLEUS));
-        symbols.add(new Symbol("k", 3.0, null, Role.CODA, Role.FIRST));
+        List<Symbol> matchingSymbols = symbols.selectMatchingSymbols(definedSymbols.get(0), Role.NUCLEUS, Role.LAST);
 
-        generator.fakeRandom = 0;
-
-        Symbol selected = symbols.select(previous, Role.NUCLEUS, Role.LAST);
-
-        System.out.println(symbols);
-
-        Assert.assertSame(expected, selected);
+        Assert.assertThat(matchingSymbols, new SymbolListMatcher(2));
     }
 
-    private static class MyRandomNumberGenerator implements RandomNumberGenerator {
-        double fakeRandom = 0.0;
-
-        @Override
-        public double generate(double max) {
-            return fakeRandom;
+    private void defineSymbols(Symbol... newSymbols) {
+        for (Symbol s : newSymbols) {
+            symbols.add(s);
+            definedSymbols.add(s);
         }
     }
 
-    private class SymbolRoleMatcher extends BaseMatcher<Symbol> {
-        private final Role requiredRole;
+    private class SymbolListMatcher extends BaseMatcher<List<Symbol>> {
+        private final List<Symbol> expectedSymbols;
 
-        public SymbolRoleMatcher(Role requiredRole) {
-            this.requiredRole = requiredRole;
+        public SymbolListMatcher(int... expectedSymbolIndexes) {
+            this.expectedSymbols = new ArrayList<Symbol>();
+            for (int i : expectedSymbolIndexes) {
+                expectedSymbols.add(definedSymbols.get(i));
+            }
         }
 
         @Override
         public void describeTo(Description description) {
-            description.appendText("<symbols for role " + requiredRole + ">");
+
         }
 
         @Override
-        public boolean matches(Object item) {
-            Collection<Symbol> roleSymbols = symbols.findSymbols(requiredRole);
-            return roleSymbols.contains(item);
+        public boolean matches(Object o) {
+            List<Symbol> actual = (List<Symbol>) o;
+            if (actual.size() != expectedSymbols.size()) {
+                return false;
+            }
+            for (Symbol s : actual) {
+                boolean found = false;
+                for (Symbol t : expectedSymbols) {
+                    if (t == s) {
+                        found = true;
+                        break;
+                    }
+                }
+                if (!found) {
+                    return false;
+                }
+            }
+            return true;
         }
     }
 }
