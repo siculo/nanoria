@@ -26,17 +26,17 @@ public class SymbolSet {
     }
 
     public Symbol select(Symbol previousSymbol, Role... roles) {
-        Map<String, Symbol> matchingSymbols = new HashMap<String, Symbol>();
+        return getRandomSymbol(getMatchingSymbols(previousSymbol, roles));
+    }
+
+    public List<Symbol> getMatchingSymbols(Symbol previousSymbol, Role... roles) {
+        Map<String, Symbol> symbolCollector = new HashMap<String, Symbol>();
         for (Symbol s : symbolsQueue) {
             if (s.matchRoles(roles) && s.allowedBy(previousSymbol)) {
-                matchingSymbols.put(s.getKey(), s);
+                symbolCollector.put(s.getKey(), s);
             }
         }
-        for (Symbol m: matchingSymbols.values()) {
-            System.out.println(m);
-        }
-
-        return getRandomSymbol(asList(matchingSymbols));
+        return asList(symbolCollector);
     }
 
     private List<Symbol> asList(Map<String, Symbol> matchingSymbols) {

@@ -1,2 +1,2 @@
-x empty Symbol
+- move random symbol selection out of SymbolSet
 - name generator
