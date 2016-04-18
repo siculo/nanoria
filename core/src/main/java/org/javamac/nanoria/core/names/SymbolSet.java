@@ -17,7 +17,7 @@ public class SymbolSet {
     private static class RelevanceComparator implements Comparator<Symbol> {
         @Override
         public int compare(Symbol o1, Symbol o2) {
-            return -o1.compareTo(o2);
+            return o1.compareTo(o2);
         }
     }
 
@@ -26,20 +26,25 @@ public class SymbolSet {
     }
 
     public Symbol select(Symbol previousSymbol, Role... roles) {
-        List<Symbol> matchingSymbols = new ArrayList<Symbol>();
+        Map<String, Symbol> matchingSymbols = new HashMap<String, Symbol>();
         for (Symbol s : symbolsQueue) {
             if (s.matchRoles(roles) && s.allowedBy(previousSymbol)) {
-                if (matchingSymbols.size() == 0 || matchingSymbols.get(0).compareTo(s) == 0) {
-                    matchingSymbols.add(s);
-                } else {
-                    break;
-                }
+                matchingSymbols.put(s.getKey(), s);
             }
         }
-        for (Symbol m: matchingSymbols) {
+        for (Symbol m: matchingSymbols.values()) {
             System.out.println(m);
         }
-        return getRandomSymbol(matchingSymbols);
+
+        return getRandomSymbol(asList(matchingSymbols));
+    }
+
+    private List<Symbol> asList(Map<String, Symbol> matchingSymbols) {
+        List<Symbol> symbols = new ArrayList<Symbol>();
+        for (Symbol s: matchingSymbols.values()) {
+            symbols.add(s);
+        }
+        return symbols;
     }
 
     private Symbol getRandomSymbol(List<Symbol> matchingSymbols) {

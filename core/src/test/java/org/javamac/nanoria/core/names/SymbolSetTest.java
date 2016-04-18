@@ -4,6 +4,7 @@ import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.Collection;
@@ -31,19 +32,10 @@ public class SymbolSetTest {
     public void selectASymbolForRole() throws InvalidSymbolException {
         symbols.add(new Symbol("c", 5.0, null, Role.INSET));
         symbols.add(new Symbol("t", 2.0, null, Role.FIRST));
-        Symbol selected = symbols.select(null, Role.INSET);
-        Assert.assertThat(selected, new BaseMatcher<Symbol>() {
-            @Override
-            public void describeTo(Description description) {
-                description.appendText("<symbols for role " + Role.INSET + ">");
-            }
 
-            @Override
-            public boolean matches(Object item) {
-                Collection<Symbol> roleSymbols = symbols.findSymbols(Role.INSET);
-                return roleSymbols.contains(item);
-            }
-        });
+        Symbol selected = symbols.select(null, Role.INSET);
+
+        Assert.assertThat(selected, new SymbolRoleMatcher(Role.INSET));
     }
 
     @Test
@@ -55,6 +47,40 @@ public class SymbolSetTest {
         symbols.add(new Symbol("c", 5.0, null, Role.CODA, Role.FIRST));
 
         Symbol selected = symbols.select(null, Role.INSET, Role.FIRST);
+
+        Assert.assertSame(expected, selected);
+    }
+
+    @Test
+    public void selectARandomSymbol1() throws InvalidSymbolException {
+        final Symbol expected;
+
+        symbols.add(expected = new Symbol("", 5.0, null, Role.INSET));
+        symbols.add(new Symbol("c", 5.0, null, Role.INSET, Role.FIRST));
+        symbols.add(new Symbol("d", 5.0, null, Role.CODA));
+
+        generator.fakeRandom = 0.0;
+
+        Symbol selected = symbols.select(null, Role.INSET, Role.FIRST);
+
+        System.out.println(selected);
+
+        Assert.assertSame(expected, selected);
+    }
+
+    @Test
+    public void selectARandomSymbol2() throws InvalidSymbolException {
+        final Symbol expected;
+
+        symbols.add(new Symbol("", 5.0, null, Role.INSET));
+        symbols.add(expected = new Symbol("c", 5.0, null, Role.INSET, Role.FIRST));
+        symbols.add(new Symbol("d", 5.0, null, Role.CODA));
+
+        generator.fakeRandom = 6.2;
+
+        Symbol selected = symbols.select(null, Role.INSET, Role.FIRST);
+
+        System.out.println(selected);
 
         Assert.assertSame(expected, selected);
     }
@@ -74,11 +100,11 @@ public class SymbolSetTest {
 
     @Test
     public void selectAMoreCompellingRandomSymbolForRoles() throws InvalidSymbolException {
-        Symbol expected = new Symbol("c", 2.0, null, Role.INSET, Role.LAST);
+        Symbol expected;
 
         symbols.add(new Symbol("c", 5.0, null, Role.INSET));
         symbols.add(new Symbol("p", 5.0, null, Role.INSET, Role.LAST));
-        symbols.add(expected);
+        symbols.add(expected = new Symbol("c", 2.0, null, Role.INSET, Role.LAST));
         symbols.add(new Symbol("c", 5.0, null, Role.CODA, Role.FIRST));
 
         generator.fakeRandom = 7.0;
@@ -90,16 +116,18 @@ public class SymbolSetTest {
 
     @Test
     public void selectAMoreCompellingRandomSymbolForRoles2() throws InvalidSymbolException {
-        Symbol expected = new Symbol("c", 5.0, null, Role.INSET, Role.LAST);
+        Symbol expected;
 
         symbols.add(new Symbol("c", 5.0, null, Role.INSET));
-        symbols.add(expected);
+        symbols.add(expected = new Symbol("x", 5.0, null, Role.INSET, Role.LAST));
         symbols.add(new Symbol("p", 2.0, null, Role.INSET, Role.LAST));
         symbols.add(new Symbol("c", 5.0, null, Role.CODA, Role.FIRST));
 
-        generator.fakeRandom = 1.5;
+        generator.fakeRandom = 7.5;
 
         Symbol selected = symbols.select(null, Role.INSET, Role.LAST);
+
+        System.out.println(selected);
 
         Assert.assertSame(expected, selected);
     }
@@ -130,6 +158,25 @@ public class SymbolSetTest {
         @Override
         public double generate(double max) {
             return fakeRandom;
+        }
+    }
+
+    private class SymbolRoleMatcher extends BaseMatcher<Symbol> {
+        private final Role requiredRole;
+
+        public SymbolRoleMatcher(Role requiredRole) {
+            this.requiredRole = requiredRole;
+        }
+
+        @Override
+        public void describeTo(Description description) {
+            description.appendText("<symbols for role " + requiredRole + ">");
+        }
+
+        @Override
+        public boolean matches(Object item) {
+            Collection<Symbol> roleSymbols = symbols.findSymbols(requiredRole);
+            return roleSymbols.contains(item);
         }
     }
 }
