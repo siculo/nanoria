@@ -2,8 +2,12 @@ package org.javamac.nanoria.core.names;
 
 import org.javamac.nanoria.core.NotEmptyStringMatcher;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.net.URISyntaxException;
 
 public class NameGeneratorTest {
     private RandomNumberGenerator randomNumberGenerator = new RandomNumberGenerator() {
@@ -14,19 +18,31 @@ public class NameGeneratorTest {
     };
 
     @Test
-    public void generateNamesFromASymbolSet() {
+    public void generateNamesFromASymbolSet() throws FileNotFoundException, URISyntaxException, InvalidSymbolException {
         SymbolSet symbolSet = new SymbolSet(randomNumberGenerator);
+        readLanguageSymbols(symbolSet, getFileFromResource(NameGeneratorTest.class, "testSymbols.txt"));
         NameGenerator generator = new NameGenerator(symbolSet);
+
+        Symbol symbol = symbolSet.select(null, Role.FIRST, Role.INSET);
+        System.out.println(symbol.getKey());
+        Assert.assertNotNull(symbol);
+
+//        String name = generator.generate();
+//        System.out.println(name);
+//        Assert.assertThat(name, NotEmptyStringMatcher.INSTANCE);
+
     }
 
-    @Ignore
-    @Test
-    public void generateNames() {
-        NameGenerator generator = new NameGenerator(null);
-        String name = generator.generate();
+    private File getFileFromResource(Class<NameGeneratorTest> resourceClass, String fileName) throws URISyntaxException {
+        return new File(resourceClass.getResource(fileName).toURI());
+    }
 
-        System.out.println(name);
-
-        Assert.assertThat(name, NotEmptyStringMatcher.INSTANCE);
+    private static void readLanguageSymbols(SymbolSet symbolSet, File languageFile) throws FileNotFoundException, InvalidSymbolException {
+        FileReader reader = new FileReader(languageFile);
+        SymbolReader symbolReader = new SymbolReader(reader);
+        Symbol symbol;
+        while ((symbol = symbolReader.getNextSymbol()) != null) {
+            symbolSet.add(symbol);
+        }
     }
 }

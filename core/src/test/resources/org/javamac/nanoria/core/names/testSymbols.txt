@@ -1,0 +1,82 @@
+b	5	[aeiou]{1,2}	inset
+br	2	([aeiou]{1,2})|[y]	inset
+c	5	[aeiou]{1,2}	inset
+cr	2	[aeiou]{1,2}	inset
+d	5	([aeiou]{1,2})|[y]	inset
+dr	2	[aeiou]{1,2}	inset
+f	5	([aeiou]{1,2})|[y]	inset
+fr	2	[aeiou]{1,2}	inset
+fl	2	[aeiouy]{1,2}	inset
+g	5	([aeiou]{1,2})|[y]	inset
+gr	2	[aeiou]{1,2}	inset
+gn	2	[aeiou]{1,2}	inset
+k	4	[aeiou]{1,2}	inset
+l	4	([aeiou]{1,2})|[y]	inset
+m	4	([aeiou]{1,2})|[y]	inset
+n	4	([aeiou]{1,2})|[y]	inset
+p	5	([aeiou]{1,2})|[y]	inset
+pr	2	([aeiou]{1,2})|[y]	inset
+pl	1	([aeiou]{1,2})|[y]	inset
+r	5	([aeiou]{1,2})|[y]	inset
+s	5	([aeiou]{1,2})|[y]	inset
+sh	2	[aeiou]{1,2}	inset
+t	5	([aeiou]{1,2})|[y]	inset
+tr	2	[aeiou]{1,2}	inset
+v	4	[aeiou]{1,2}	inset
+w	4	([aeiou]{1,2})|[y]	inset
+x	1	([aeiou]{1,2})|[y]	inset
+z	1	([aeiou]{1,2})|[y]	inset
+	80	([aeiou]{1,2})|(j[aeou])	inset,first
+h	8		inset,first
+q	8		inset,first
+pl	5		inset,first
+a	8		nucleus
+e	8		nucleus
+I	8		nucleus
+o	8		nucleus
+u	8		nucleus
+y	3		nucleus
+j	2		nucleus
+ai	3		nucleus
+ao	3		nucleus
+au	3		nucleus
+ay	3		nucleus
+ea	3		nucleus
+ei	3		nucleus
+eo	3		nucleus
+eu	3		nucleus
+oa	3		nucleus
+oe	3		nucleus
+oi	3		nucleus
+ou	3		nucleus
+ua	3		nucleus
+ue	3		nucleus
+ui	3		nucleus
+uo	3		nucleus
+ya	3		nucleus
+ye	3		nucleus
+yo	3		nucleus
+yu	3		nucleus
+ja	3		nucleus
+je	3		nucleus
+jo	3		nucleus
+ju	3		nucleus
+	80		coda
+r	5	[stmnc]	coda,middle
+n	2	[tdpkfg]	coda
+ck	1		coda,last
+d	2		coda,last
+f	4		coda,last
+g	4		coda,last
+gr	1		coda,last
+k	4		coda,last
+l	1		coda,last
+m	3		coda,last
+n	3		coda,last
+p	2		coda,last
+r	4		coda,last
+s	4		coda,last
+st	2		coda,last
+t	2		coda,last
+x	2		coda,last
+z	1		coda,last
