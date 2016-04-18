@@ -93,8 +93,8 @@ public class SymbolTest {
         Assert.assertFalse(symbol.allowedBy(previousSymbol));
     }
 
-    @Test(expected = InvalidSymbolException.class)
-    public void keyMustBeValid() throws InvalidSymbolException {
+    @Test
+    public void emptyKeyIsValid() throws InvalidSymbolException {
         new Symbol("", 5.0, "[bcd].*", Role.NUCLEUS, Role.MIDDLE);
     }
 

@@ -80,13 +80,6 @@ public class SymbolReaderTest {
     }
 
     @Test(expected = InvalidSymbolException.class)
-    public void wrongKey() throws InvalidSymbolException {
-        SymbolReader reader = new SymbolReader(new StringReader("\t5\t[aeiou]{1,2}\tinset,last"));
-
-        Symbol symbol = reader.getNextSymbol();
-    }
-
-    @Test(expected = InvalidSymbolException.class)
     public void wrongWeight() throws InvalidSymbolException {
         SymbolReader reader = new SymbolReader(new StringReader("b\tas\t[aeiou]{1,2}\tinset,last"));
 

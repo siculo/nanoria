@@ -14,7 +14,7 @@ public class Symbol implements Comparable<Symbol> {
     private final Pattern allows;
 
     public Symbol(String key, double weight, String allows, Role... roles) throws InvalidSymbolException {
-        this.key = getKey(key);
+        this.key = key;
         this.weight = getWeight(weight);
         this.allows = getPattern(allows);
         this.roles = roles;
@@ -25,13 +25,6 @@ public class Symbol implements Comparable<Symbol> {
             throw new InvalidSymbolException("wrong weight: " + weight);
         }
         return weight;
-    }
-
-    private String getKey(String key) throws InvalidSymbolException {
-        if (StringUtils.isEmpty(key)) {
-            throw new InvalidSymbolException("wrong key: " + key);
-        }
-        return key;
     }
 
     private Pattern getPattern(String allows) throws InvalidSymbolException {
