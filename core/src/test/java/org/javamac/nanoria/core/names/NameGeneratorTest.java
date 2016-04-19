@@ -20,11 +20,11 @@ public class NameGeneratorTest {
 
     @Test
     public void generateNamesFromASymbolSet() throws FileNotFoundException, URISyntaxException {
-        File f = getFileFromResource(NameGeneratorTest.class, "testSymbols.txt");
+        File f = getFileFromResource(NameGeneratorTest.class, "/testSymbols.txt");
     }
 
     private File getFileFromResource(Class<?> resourceClass, String fileName) throws URISyntaxException, FileNotFoundException {
-        URL resource = resourceClass.getClassLoader().getResource(fileName);
+        URL resource = resourceClass.getResource(fileName);
         if (resource == null) throw new FileNotFoundException();
         return new File(resource.toURI());
     }
