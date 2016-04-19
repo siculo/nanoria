@@ -1,7 +1,6 @@
 package org.javamac.nanoria.core.names;
 
-import org.javamac.nanoria.core.NotEmptyStringMatcher;
-import org.junit.Assert;
+import org.javamac.nanoria.core.utils.RandomNumberGenerator;
 import org.junit.Test;
 
 import java.io.File;
@@ -19,8 +18,22 @@ public class NameGeneratorTest {
     };
 
     @Test
-    public void generateNamesFromASymbolSet() throws FileNotFoundException, URISyntaxException {
-        File f = getFileFromResource(NameGeneratorTest.class, "/testSymbols.txt");
+    public void generateNamesFromASymbolSet() throws FileNotFoundException, URISyntaxException, InvalidSymbolException {
+        SymbolSet symbolSet = readSymbolSet(getFileFromResource(NameGeneratorTest.class, "/testSymbols.txt"));
+        NameGenerator generator = new NameGenerator(symbolSet);
+        String name = generator.generate();
+
+        System.out.println("\"" + name + "\"");
+    }
+
+    private SymbolSet readSymbolSet(File symbolSetFile) throws FileNotFoundException, InvalidSymbolException {
+        SymbolReader reader = new SymbolReader(new FileReader(symbolSetFile));
+        SymbolSet symbolSet = new SymbolSet();
+        Symbol symbol;
+        while ((symbol = reader.getNextSymbol()) != null) {
+            symbolSet.add(symbol);
+        }
+        return symbolSet;
     }
 
     private File getFileFromResource(Class<?> resourceClass, String fileName) throws URISyntaxException, FileNotFoundException {

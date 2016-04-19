@@ -1,5 +1,7 @@
 package org.javamac.nanoria.core.names;
 
+import org.javamac.nanoria.core.utils.RandomNumberGenerator;
+
 import java.util.List;
 
 public class SymbolChooser {

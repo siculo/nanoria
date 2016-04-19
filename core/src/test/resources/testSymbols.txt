@@ -26,13 +26,13 @@ v	4	[aeiou]{1,2}	inset
 w	4	([aeiou]{1,2})|[y]	inset
 x	1	([aeiou]{1,2})|[y]	inset
 z	1	([aeiou]{1,2})|[y]	inset
-	80	([aeiou]{1,2})|(j[aeou])	inset,first
+	40	([aeiou]{1,2})|(j[aeou])	inset,first
 h	8		inset,first
-q	8		inset,first
+q	8	[u]{2}	inset,first
 pl	5		inset,first
 a	8		nucleus
 e	8		nucleus
-I	8		nucleus
+i	8		nucleus
 o	8		nucleus
 u	8		nucleus
 y	3		nucleus
@@ -61,14 +61,13 @@ ja	3		nucleus
 je	3		nucleus
 jo	3		nucleus
 ju	3		nucleus
-	80		coda
+	40		coda
 r	5	[stmnc]	coda,middle
 n	2	[tdpkfg]	coda
 ck	1		coda,last
 d	2		coda,last
 f	4		coda,last
 g	4		coda,last
-gr	1		coda,last
 k	4		coda,last
 l	1		coda,last
 m	3		coda,last

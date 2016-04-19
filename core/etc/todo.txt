@@ -1,2 +1,4 @@
 - name generator
-- use a more standard random number generation class instead of org.javamac.nanoria.core.names.RandomNumberGenerator
+    - experiments with names
+    - some code cleanup?
+- use a more standard random number generation class instead of org.javamac.nanoria.core.utils.RandomNumberGenerator

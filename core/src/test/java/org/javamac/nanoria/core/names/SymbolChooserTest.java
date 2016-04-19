@@ -1,5 +1,6 @@
 package org.javamac.nanoria.core.names;
 
+import org.javamac.nanoria.core.utils.RandomNumberGenerator;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -32,7 +33,7 @@ public class SymbolChooserTest {
         symbols.add(new Symbol("e", 2.0, null, Role.NUCLEUS));
         symbols.add(expected = new Symbol("o", 1.0, null, Role.NUCLEUS));
 
-        generator.fakeRandom = 7.88;
+        generator.fakeRandomNumber = 7.88;
 
         Symbol symbol = chooser.choose(symbols);
         Assert.assertSame(expected, symbol);
@@ -41,11 +42,11 @@ public class SymbolChooserTest {
     }
 
     private static class MyRandomNumberGenerator implements RandomNumberGenerator {
-        double fakeRandom = 0.0;
+        double fakeRandomNumber = 0.0;
 
         @Override
         public double generate(double max) {
-            return fakeRandom;
+            return fakeRandomNumber;
         }
     }
 }
