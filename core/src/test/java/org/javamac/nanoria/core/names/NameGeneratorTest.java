@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.net.URISyntaxException;
+import java.net.URL;
 
 public class NameGeneratorTest {
     private RandomNumberGenerator randomNumberGenerator = new RandomNumberGenerator() {
@@ -18,11 +19,14 @@ public class NameGeneratorTest {
     };
 
     @Test
-    public void generateNamesFromASymbolSet() throws FileNotFoundException, URISyntaxException, InvalidSymbolException {
+    public void generateNamesFromASymbolSet() throws FileNotFoundException, URISyntaxException {
+        File f = getFileFromResource(NameGeneratorTest.class, "testSymbols.txt");
     }
 
-    private File getFileFromResource(Class<NameGeneratorTest> resourceClass, String fileName) throws URISyntaxException {
-        return new File(resourceClass.getResource(fileName).toURI());
+    private File getFileFromResource(Class<?> resourceClass, String fileName) throws URISyntaxException, FileNotFoundException {
+        URL resource = resourceClass.getClassLoader().getResource(fileName);
+        if (resource == null) throw new FileNotFoundException();
+        return new File(resource.toURI());
     }
 
     private static void readLanguageSymbols(SymbolSet symbolSet, File languageFile) throws FileNotFoundException, InvalidSymbolException {
