@@ -1,5 +1,6 @@
 package org.javamac.nanoria.core.names;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class SymbolSetValidator {
@@ -32,6 +33,8 @@ public class SymbolSetValidator {
     }
 
     private Role[] allCompatibleRoles(Symbol symbol) {
-        return new Role[0];
+        List<Role> compatibleRoles = new ArrayList<Role>();
+        //
+        return Role.values();
     }
 }

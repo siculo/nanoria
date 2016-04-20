@@ -26,4 +26,17 @@ public class SymbolSetValidatorTest {
         Assert.assertTrue(validator.isValid());
         Assert.assertNull(validator.getBrokenSymbol());
     }
+
+    @Test
+    public void notValidSymbolSet() throws InvalidSymbolException {
+        SymbolSet symbols = new SymbolSet();
+        symbols.add(new Symbol("c", 1, null, Role.INSET));
+        // no nucleus
+        symbols.add(new Symbol("t", 1, null, Role.CODA));
+
+        SymbolSetValidator validator = new SymbolSetValidator(symbols);
+
+        Assert.assertTrue(validator.isValid());
+        Assert.assertNull(validator.getBrokenSymbol());
+    }
 }
