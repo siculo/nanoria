@@ -100,6 +100,21 @@ public class SymbolSetTest {
         Assert.assertThat(matchingSymbols, new SymbolListMatcher(2));
     }
 
+    @Test
+    public void getAllSymbols() throws InvalidSymbolException {
+        defineSymbols(
+                new Symbol("c", 4.0, "[aeiou].*", Role.INSET),
+                new Symbol("y", 2.0, null, Role.NUCLEUS),
+                new Symbol("a", 5.0, null, Role.NUCLEUS),
+                new Symbol("j", 2.0, null, Role.NUCLEUS),
+                new Symbol("k", 3.0, null, Role.CODA, Role.FIRST)
+        );
+
+        List<Symbol> matchingSymbols = symbols.getAllSymbols();
+
+        Assert.assertThat(matchingSymbols, new SymbolListMatcher(0, 1, 2, 3, 4));
+    }
+
     private void defineSymbols(Symbol... newSymbols) {
         for (Symbol s : newSymbols) {
             symbols.add(s);

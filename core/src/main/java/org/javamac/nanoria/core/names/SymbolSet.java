@@ -12,6 +12,15 @@ public class SymbolSet {
         this.symbolsQueue = new PriorityQueue<Symbol>(1, new RelevanceComparator());
     }
 
+    public List<Symbol> getAllSymbols() {
+        final List<Symbol> allSymbols = new ArrayList<Symbol>();
+        Iterator<Symbol> i = symbolsQueue.iterator();
+        while (i.hasNext()) {
+            allSymbols.add(i.next());
+        }
+        return allSymbols;
+    }
+
     private static class RelevanceComparator implements Comparator<Symbol> {
         @Override
         public int compare(Symbol o1, Symbol o2) {
