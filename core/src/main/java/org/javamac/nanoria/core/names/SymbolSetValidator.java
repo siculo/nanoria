@@ -1,40 +1,39 @@
 package org.javamac.nanoria.core.names;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 public class SymbolSetValidator {
-    private boolean valid = false;
-    private Symbol brokenSymbol = null;
+    private final boolean valid;
 
     public SymbolSetValidator(SymbolSet symbols) {
-        validate(symbols);
+        valid = validate(symbols);
     }
 
     public boolean isValid() {
         return valid;
     }
 
-    public Symbol getBrokenSymbol() {
-        return brokenSymbol;
-    }
-
-    private void validate(SymbolSet symbols) {
+    private boolean validate(SymbolSet symbols) {
         List<Symbol> allSymbols = symbols.getAllSymbols();
-        for (Symbol s : allSymbols) {
-            List<Symbol> compatibleSymbols = symbols.selectMatchingSymbols(s, allCompatibleRoles(s));
-            if (compatibleSymbols.size() == 0) {
-                valid = false;
-                brokenSymbol = s;
-                return;
+        for (Symbol symbol : allSymbols) {
+            if (!validate(symbol, symbols)) {
+                return false;
             }
         }
-        valid = allSymbols.size() > 0;
+        return allSymbols.size() > 0;
     }
 
-    private Role[] allCompatibleRoles(Symbol symbol) {
-        List<Role> compatibleRoles = new ArrayList<Role>();
-        //
-        return Role.values();
+    private boolean validate(Symbol symbol, SymbolSet symbols) {
+        Iterator<Role[]> i = new CompatibleRolesIterator(symbol.getRoles());
+        while (i.hasNext()) {
+            Role[] compatibleRoles = i.next();
+            List<Symbol> matchingSymbols = symbols.selectMatchingSymbols(symbol, compatibleRoles);
+            if (matchingSymbols.size() == 0) {
+                return false;
+            }
+        }
+        return true;
     }
 }

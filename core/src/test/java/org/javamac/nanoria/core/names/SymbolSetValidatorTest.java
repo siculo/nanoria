@@ -1,6 +1,7 @@
 package org.javamac.nanoria.core.names;
 
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class SymbolSetValidatorTest {
@@ -11,7 +12,6 @@ public class SymbolSetValidatorTest {
         SymbolSetValidator validator = new SymbolSetValidator(symbols);
 
         Assert.assertFalse(validator.isValid());
-        Assert.assertNull(validator.getBrokenSymbol());
     }
 
     @Test
@@ -24,7 +24,6 @@ public class SymbolSetValidatorTest {
         SymbolSetValidator validator = new SymbolSetValidator(symbols);
 
         Assert.assertTrue(validator.isValid());
-        Assert.assertNull(validator.getBrokenSymbol());
     }
 
     @Test
@@ -36,7 +35,6 @@ public class SymbolSetValidatorTest {
 
         SymbolSetValidator validator = new SymbolSetValidator(symbols);
 
-        Assert.assertTrue(validator.isValid());
-        Assert.assertNull(validator.getBrokenSymbol());
+        Assert.assertFalse(validator.isValid());
     }
 }
