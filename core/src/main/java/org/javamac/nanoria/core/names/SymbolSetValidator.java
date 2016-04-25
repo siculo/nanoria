@@ -8,48 +8,53 @@ import java.util.List;
 public class SymbolSetValidator {
     private final FollowingRolesMap followingRolesMap = new FollowingRolesMap();
     private final SymbolSet symbols;
-    private final boolean valid;
-    private Symbol notValidSymbol;
+    private final List<Symbol> notValidSymbols;
+
+    private boolean valid;
 
     public SymbolSetValidator(SymbolSet symbols) {
         this.symbols = symbols;
-        this.valid = validate();
+        this.notValidSymbols = new ArrayList<Symbol>();
+        this.valid = false;
+        validate();
     }
 
     public boolean isValid() {
         return valid;
     }
 
-    private boolean validate() {
+    public List<Symbol> getNotValidSymbols() {
+        return notValidSymbols;
+    }
+
+    private void validate() {
         List<Symbol> allSymbols = symbols.getAllSymbols();
+        this.valid = allSymbols.size() > 0;
         for (Symbol symbol : allSymbols) {
             if (!validate(symbol)) {
-                return false;
+                notValidSymbols.add(symbol);
+                valid = false;
             }
         }
-        return allSymbols.size() > 0;
     }
 
     private boolean validate(Symbol symbol) {
         Iterator<Role[]> i = new CompatibleRolesIterator(symbol.getRoles());
         while (i.hasNext()) {
-            if (validateForRoles(symbol, i.next())) return false;
+            if (!validateForRoles(symbol, i.next())) {
+                return false;
+            }
         }
         return true;
     }
 
     private boolean validateForRoles(Symbol symbol, Role[] compatibleRoles) {
-        for(Role[] followingRoles: followingRolesMap.getFollowingRoles(compatibleRoles)) {
+        for (Role[] followingRoles : followingRolesMap.getFollowingRoles(compatibleRoles)) {
             List<Symbol> matchingSymbols = symbols.selectMatchingSymbols(symbol, followingRoles);
             if (matchingSymbols.size() == 0) {
-                notValidSymbol = symbol;
-                return true;
+                return false;
             }
         }
-        return false;
-    }
-
-    public Symbol getNotValidSymbol() {
-        return notValidSymbol;
+        return true;
     }
 }

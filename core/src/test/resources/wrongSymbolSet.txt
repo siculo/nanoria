@@ -28,7 +28,7 @@ x	1	([aeiou]{1,2})|[y]	inset
 z	1	([aeiou]{1,2})|[y]	inset
 	40	([aeiou]{1,2})|(j[aeou])	inset,first
 h	8		inset,first
-q	8	u[aeio] inset,first
+q	8	[u]{2}	inset,first
 pl	5		inset,first
 a	8		nucleus
 e	8		nucleus

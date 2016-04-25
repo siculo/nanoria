@@ -3,6 +3,9 @@ package org.javamac.nanoria.core.names;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.util.*;
 
 public class SymbolSet {
@@ -10,6 +13,16 @@ public class SymbolSet {
 
     public SymbolSet() {
         this.symbolsQueue = new PriorityQueue<Symbol>(1, new RelevanceComparator());
+    }
+
+    public static SymbolSet readSymbolSet(File symbolSetFile) throws FileNotFoundException, InvalidSymbolException {
+        SymbolReader reader = new SymbolReader(new FileReader(symbolSetFile));
+        SymbolSet symbolSet = new SymbolSet();
+        Symbol symbol;
+        while ((symbol = reader.getNextSymbol()) != null) {
+            symbolSet.add(symbol);
+        }
+        return symbolSet;
     }
 
     public List<Symbol> getAllSymbols() {

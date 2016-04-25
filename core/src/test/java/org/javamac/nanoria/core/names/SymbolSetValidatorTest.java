@@ -1,8 +1,13 @@
 package org.javamac.nanoria.core.names;
 
+import org.javamac.nanoria.core.utils.Resources;
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
+
+import java.io.FileNotFoundException;
+import java.net.URISyntaxException;
+import java.util.List;
 
 public class SymbolSetValidatorTest {
     @Test
@@ -59,8 +64,8 @@ public class SymbolSetValidatorTest {
 
         SymbolSetValidator validator = new SymbolSetValidator(symbols);
 
-        Symbol currentNotValid = validator.getNotValidSymbol();
-        Assert.assertNull(currentNotValid);
+        List<Symbol> notValidSymbols = validator.getNotValidSymbols();
+        Assert.assertEquals(0, notValidSymbols.size());
     }
 
     @Test
@@ -73,7 +78,54 @@ public class SymbolSetValidatorTest {
 
         SymbolSetValidator validator = new SymbolSetValidator(symbols);
 
-        Symbol currentNotValid = validator.getNotValidSymbol();
-        Assert.assertSame(expectedNotValid, currentNotValid);
+        List<Symbol> notValidSymbols = validator.getNotValidSymbols();
+        Assert.assertSame(expectedNotValid, notValidSymbols.get(0));
+    }
+
+    @Test
+    public void getNotValidSymbols() throws InvalidSymbolException {
+        Symbol expectedNotValid;
+        SymbolSet symbols = new SymbolSet();
+        symbols.add(new Symbol("c", 1, null, Role.INSET));
+        symbols.add(new Symbol("a", 1, "([aeiou]{1,2})|[y]", Role.NUCLEUS));
+        symbols.add(new Symbol("r", 1, "([aeiou]{1,2})|[y]", Role.CODA));
+        symbols.add(new Symbol("t", 1, null, Role.CODA));
+
+        SymbolSetValidator validator = new SymbolSetValidator(symbols);
+
+        List<Symbol> notValidSymbols = validator.getNotValidSymbols();
+
+        Assert.assertEquals(2, notValidSymbols.size());
+
+        for (Symbol s: notValidSymbols) {
+            System.out.println(s);
+        }
+    }
+
+    @Test
+    public void notValidSymbolSetReadFromReources() throws InvalidSymbolException, FileNotFoundException, URISyntaxException {
+        SymbolSet symbols = SymbolSet.readSymbolSet(Resources.getFileFromResource(NameGeneratorTest.class, "/wrongSymbolSet.txt"));
+        SymbolSetValidator validator = new SymbolSetValidator(symbols);
+
+        List<Symbol> notValidSymbols = validator.getNotValidSymbols();
+
+        Assert.assertNotEquals(0, notValidSymbols.size());
+
+        for (Symbol s: notValidSymbols) {
+            System.out.println(s);
+        }
+    }
+
+    @Test
+    public void notValidSymbolSetReadFromReources2() throws InvalidSymbolException, FileNotFoundException, URISyntaxException {
+        SymbolSet symbols = SymbolSet.readSymbolSet(Resources.getFileFromResource(NameGeneratorTest.class, "/testSymbols.txt"));
+        SymbolSetValidator validator = new SymbolSetValidator(symbols);
+
+        List<Symbol> notValidSymbols = validator.getNotValidSymbols();
+        for (Symbol s: notValidSymbols) {
+            System.out.println(s);
+        }
+
+        Assert.assertTrue(validator.isValid());
     }
 }
