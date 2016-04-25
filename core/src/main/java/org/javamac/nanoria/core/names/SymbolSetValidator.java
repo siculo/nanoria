@@ -9,6 +9,7 @@ public class SymbolSetValidator {
     private final FollowingRolesMap followingRolesMap = new FollowingRolesMap();
     private final SymbolSet symbols;
     private final boolean valid;
+    private Symbol notValidSymbol;
 
     public SymbolSetValidator(SymbolSet symbols) {
         this.symbols = symbols;
@@ -41,9 +42,14 @@ public class SymbolSetValidator {
         for(Role[] followingRoles: followingRolesMap.getFollowingRoles(compatibleRoles)) {
             List<Symbol> matchingSymbols = symbols.selectMatchingSymbols(symbol, followingRoles);
             if (matchingSymbols.size() == 0) {
+                notValidSymbol = symbol;
                 return true;
             }
         }
         return false;
+    }
+
+    public Symbol getNotValidSymbol() {
+        return notValidSymbol;
     }
 }
