@@ -44,7 +44,7 @@ public class NameGenerator {
     }
 
     private boolean determineLastSyllable(int syllableCount) {
-        return randomNumberGenerator.generate(1.0) > 1.0 / (syllableCount + 1.0) || syllableCount > 2;
+        return randomNumberGenerator.generate(1.0) > 1.0 / (syllableCount + 1.0) || syllableCount > 1;
     }
 
     private Symbol selectRandomSymbol(Symbol previousSymbol, Role segmentRole, boolean firstSyllable, boolean lastSyllable) {

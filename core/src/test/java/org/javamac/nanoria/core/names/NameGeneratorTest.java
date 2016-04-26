@@ -6,6 +6,7 @@ import org.junit.Test;
 
 import java.io.FileNotFoundException;
 import java.net.URISyntaxException;
+import java.util.List;
 
 public class NameGeneratorTest {
     private RandomNumberGenerator randomNumberGenerator = new RandomNumberGenerator() {
@@ -25,6 +26,32 @@ public class NameGeneratorTest {
             System.out.print((i > 0 ? ", ": "") + "\"" + name + "\"");
         }
         System.out.println("");
+    }
+
+    @Test
+    public void generateNamesFromASymbolSet2() throws FileNotFoundException, URISyntaxException, InvalidSymbolException {
+        SymbolSet symbolSet = SymbolSet.readSymbolSet(Resources.getFileFromResource(NameGeneratorTest.class, "/newSymbols.txt"));
+
+        boolean validSymbolSet = true;
+
+        SymbolSetValidator validator = new SymbolSetValidator(symbolSet);
+        List<Symbol> notValidSymbols = validator.getNotValidSymbols();
+        validSymbolSet = notValidSymbols.size() == 0;
+        if (!validSymbolSet) {
+            System.out.println("Not valid symbols:");
+            for (Symbol s : notValidSymbols) {
+                System.out.println(s);
+            }
+        }
+
+        if (validSymbolSet) {
+            NameGenerator generator = new NameGenerator(symbolSet);
+            for (int i = 0; i < 18; i++) {
+                String name = generator.generate();
+                System.out.print((i > 0 ? ", " : "") + "\"" + name + "\"");
+            }
+            System.out.println("");
+        }
     }
 
 }

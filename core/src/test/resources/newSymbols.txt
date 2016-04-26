@@ -1,0 +1,38 @@
+	20		inset,first
+h	10		inset,first
+m	5		inset,first
+w	5		inset,first
+sh	5	[aeiou]	inset,first
+ph	2	[aeiou]	inset,first
+dr	4		inset,first
+x	2		inset,middle
+tr	2		inset,middle
+r	5		inset,middle
+n	5		inset,middle
+t	2		inset,last
+n	5		inset,last
+
+a	6		nucleus,first
+ae	6		nucleus,first
+ea	6		nucleus,first
+e	4		nucleus,first
+i	4		nucleus,first
+o	4		nucleus,first
+u	1		nucleus,first
+
+a	5		nucleus,middle
+e	5		nucleus,middle
+i	5		nucleus,middle
+o	5		nucleus,middle
+
+a	5		nucleus,last
+e	5		nucleus,last
+i	5		nucleus,last
+o	5		nucleus,last
+
+t	2	[rt]	coda,first
+t	2	[rt]	coda,middle
+m	2		coda,last
+s	4		coda,middle
+r	4		coda,last
+	5		coda
