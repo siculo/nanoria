@@ -57,4 +57,9 @@ public class CompatibleRolesIterator implements Iterator<Role[]> {
         }
         return roles;
     }
+
+    @Override
+    public void remove() {
+
+    }
 }
