@@ -20,6 +20,7 @@ public class GameView extends GroupLayer {
     private final Tile[] ptiles;
     private final Map<Coord, ImageLayer> pviews = new HashMap<>();
     private final Sound click;
+    private final FlipBatch flip;
 
     public GameView(Nanoria game, IDimension viewSize) {
         this.game = game;
@@ -47,6 +48,8 @@ public class GameView extends GroupLayer {
         // dispose our pieces texture when this layer is disposed
         onDisposed(ptex.disposeSlot());
 
+        this.flip = new FlipBatch(game.plat.graphics().gl, 2);
+
         game.pieces.connect(new RMap.Listener<Coord, Piece>() {
             @Override
             public void onPut(Coord coord, Piece piece) {
@@ -64,6 +67,7 @@ public class GameView extends GroupLayer {
     @Override
     public void close() {
         super.close();
+        flip.close();
         ptiles[0].texture().close(); // both ptiles reference the same texture
     }
 
@@ -71,7 +75,9 @@ public class GameView extends GroupLayer {
         final List<ImageLayer> plays = new ArrayList<>();
         for (final Coord coord : coords) {
             ImageLayer pview = addPiece(coord, color);
-            pview.setAlpha(0.3f);
+            // fade the piece in
+            pview.setAlpha(0);
+            game.anim.tweenAlpha(pview).to(0.3f).in(300);
             // when the player clicks on a potential play, commit that play as their move
             pview.events().connect(new Pointer.Listener() {
                 @Override
@@ -80,7 +86,7 @@ public class GameView extends GroupLayer {
                     for (ImageLayer play : plays) play.close();
                     // apply this play to the game state
                     game.logic.applyPlay(game.pieces, color, coord);
-                    click.play();
+                    // click.play();
                     // and move to the next player's turn
                     game.turn.update(color.next());
                 }
@@ -106,7 +112,15 @@ public class GameView extends GroupLayer {
     private void setPiece(Coord at, Piece piece) {
         ImageLayer pview = pviews.get(at);
         if (pview == null) {
-            pviews.put(at, addPiece(at, piece));
+            pview = addPiece(at, piece);
+            pviews.put(at, pview);
+
+            // animate the piece view "falling" into place
+            pview.setVisible(false).setScale(2);
+            game.anim.setVisible(pview, true).then().
+                    tweenScale(pview).to(1).in(500).bounceOut();
+            game.anim.delay(250).then().play(click);
+            game.anim.addBarrier();
         } else {
             pview.setTile(ptiles[piece.ordinal()]);
         }
