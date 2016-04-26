@@ -8,6 +8,7 @@ import pythagoras.f.IDimension;
 import react.RMap;
 import react.Slot;
 import react.Value;
+import tripleplay.anim.Animator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +21,7 @@ public class Nanoria extends SceneGame {
     public final Value<Piece> turn = Value.create(null);
     public final Logic logic = new Logic(boardSize);
     public final Pointer pointer;
+    public final Animator anim;
 
     public Nanoria(Platform plat) {
         super(plat, 33);
@@ -32,6 +34,10 @@ public class Nanoria extends SceneGame {
                 surface.setFillColor(0xFFCCCCCC).fillRect(0, 0, size.width(), size.height());
             }
         });
+
+        // create an animator for some zip zing
+        anim = new Animator(paint);
+
         final GameView gameView = new GameView(this, size);
         rootLayer.add(gameView);
 
