@@ -5,8 +5,11 @@ import playn.core.Sound;
 import playn.core.Texture;
 import playn.core.Tile;
 import playn.scene.*;
+import pythagoras.f.FloatMath;
 import pythagoras.f.IDimension;
+import pythagoras.f.Point;
 import react.RMap;
+import tripleplay.anim.Animation;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -122,7 +125,35 @@ public class GameView extends GroupLayer {
             game.anim.delay(250).then().play(click);
             game.anim.addBarrier();
         } else {
-            pview.setTile(ptiles[piece.ordinal()]);
+            final ImageLayer fview = pview;
+            final Tile tile = ptiles[piece.ordinal()];
+            final Point eye = LayerUtil.layerToScreen(pview, fview.width() / 2, fview.height() / 2);
+            Animation.Value flipAngle = new Animation.Value() {
+                public float initial() {
+                    return flip.angle;
+                }
+
+                public void set(float value) {
+                    flip.angle = value;
+                }
+            };
+            game.anim.action(new Runnable() {
+                public void run() {
+                    flip.eyeX = eye.x;
+                    flip.eyeY = eye.y;
+                    fview.setBatch(flip);
+                }
+            }).then().tween(flipAngle).from(0).to(FloatMath.PI / 2).in(150).then().action(new Runnable() {
+                public void run() {
+                    fview.setTile(tile);
+                }
+            }).then().tween(flipAngle).to(FloatMath.PI).in(150).then().action(new Runnable() {
+                public void run() {
+                    fview.setBatch(null);
+                }
+            });
+            game.anim.addBarrier();
+            // pview.setTile(tile);
         }
     }
 
