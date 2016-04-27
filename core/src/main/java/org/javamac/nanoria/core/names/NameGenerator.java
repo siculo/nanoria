@@ -15,52 +15,63 @@ public class NameGenerator {
     }
 
     public String generate() {
-        StringBuilder sb = new StringBuilder();
-
-        int syllableCount = 0;
-
-        Symbol selectedSymbol = null;
-
-        boolean firstSyllable;
-        boolean lastSyllable;
-
-        do {
-            firstSyllable = syllableCount == 0;
-            lastSyllable = determineLastSyllable(syllableCount);
-
-            selectedSymbol = selectRandomSymbol(selectedSymbol, Role.INSET, firstSyllable, lastSyllable);
-            sb.append(selectedSymbol.getKey());
-
-            selectedSymbol = selectRandomSymbol(selectedSymbol, Role.NUCLEUS, firstSyllable, lastSyllable);
-            sb.append(selectedSymbol.getKey());
-
-            selectedSymbol = selectRandomSymbol(selectedSymbol, Role.CODA, firstSyllable, lastSyllable);
-            sb.append(selectedSymbol.getKey());
-
-            syllableCount++;
-        } while (!lastSyllable);
-
-        return sb.toString();
+        return new NameGeneration().getName();
     }
 
-    private boolean determineLastSyllable(int syllableCount) {
-        return randomNumberGenerator.generate(1.0) > 1.0 / (syllableCount + 1.0) || syllableCount > 1;
-    }
+    private class NameGeneration {
+        private StringBuilder nameBuilder = new StringBuilder();
+        private int syllableCount = 0;
+        private boolean firstSyllable;
+        private boolean lastSyllable;
 
-    private Symbol selectRandomSymbol(Symbol previousSymbol, Role segmentRole, boolean firstSyllable, boolean lastSyllable) {
-        List<Role> requiredRoles = new ArrayList<Role>();
-        requiredRoles.add(segmentRole);
-        if (firstSyllable) {
-            requiredRoles.add(Role.FIRST);
+        private Symbol previousSymbol = null;
+
+        public NameGeneration() {
+            do {
+                firstSyllable = checkIfFirstSyllable();
+                lastSyllable = checkIfLastSyllable();
+                appendRandomSymbol(Role.INSET);
+                appendRandomSymbol(Role.NUCLEUS);
+                appendRandomSymbol(Role.CODA);
+                syllableCount++;
+            } while (!lastSyllable);
         }
-        if (lastSyllable) {
-            requiredRoles.add(Role.LAST);
+
+        public String getName() {
+            return nameBuilder.toString();
         }
-        if (!firstSyllable && !lastSyllable) {
-            requiredRoles.add(Role.MIDDLE);
+
+        private boolean checkIfFirstSyllable() {
+            return syllableCount == 0;
         }
-        List<Symbol> matchingSymbols = symbolSet.selectMatchingSymbols(previousSymbol, requiredRoles.toArray(new Role[requiredRoles.size()]));
-        return symbolChooser.choose(matchingSymbols);
+
+        private boolean checkIfLastSyllable() {
+            return randomNumberGenerator.generate(1.0) > 1.0 / (syllableCount + 1.0) || syllableCount > 1;
+        }
+
+        private void appendRandomSymbol(Role segmentRole) {
+            final List<Symbol> matchingSymbols = symbolSet.selectMatchingSymbols(previousSymbol, rolesForSymbol(segmentRole));
+            nameBuilder.append(symbolChooser.choose(matchingSymbols).getKey());
+        }
+
+        private Role[] rolesForSymbol(Role segmentRole) {
+            final List<Role> requiredRoles = new ArrayList<Role>();
+            requiredRoles.add(segmentRole);
+            addSyllableRoles(requiredRoles);
+            return requiredRoles.toArray(new Role[requiredRoles.size()]);
+        }
+
+        private void addSyllableRoles(List<Role> requiredRoles) {
+            if (firstSyllable) {
+                requiredRoles.add(Role.FIRST);
+            }
+            if (lastSyllable) {
+                requiredRoles.add(Role.LAST);
+            }
+            if (!firstSyllable && !lastSyllable) {
+                requiredRoles.add(Role.MIDDLE);
+            }
+        }
     }
 }
 

@@ -21,7 +21,7 @@ public class NameGeneratorTest {
         SymbolSet symbolSet = SymbolSet.readSymbolSet(Resources.getFileFromResource(NameGeneratorTest.class, "/testSymbols.txt"));
         NameGenerator generator = new NameGenerator(symbolSet);
 
-        for (int i = 0; i < 1000; i++) {
+        for (int i = 0; i < 15; i++) {
             String name = generator.generate();
             System.out.print((i > 0 ? ", ": "") + "\"" + name + "\"");
         }
@@ -46,7 +46,7 @@ public class NameGeneratorTest {
 
         if (validSymbolSet) {
             NameGenerator generator = new NameGenerator(symbolSet);
-            for (int i = 0; i < 18; i++) {
+            for (int i = 0; i < 15; i++) {
                 String name = generator.generate();
                 System.out.print((i > 0 ? ", " : "") + "\"" + name + "\"");
             }

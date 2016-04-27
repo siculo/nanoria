@@ -1,2 +1,3 @@
-http://playn.io/
-https://github.com/threerings/tripleplay
+PlaiN:          http://playn.io/
+React:          https://github.com/threerings/react
+TriplePlay:     https://github.com/threerings/tripleplay
